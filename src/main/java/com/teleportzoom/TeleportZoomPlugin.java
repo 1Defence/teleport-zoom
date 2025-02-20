@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
@@ -19,7 +18,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.ClientUI;
+import net.runelite.client.util.HotkeyListener;
 
 @Slf4j
 @PluginDescriptor(
@@ -46,16 +45,11 @@ public class TeleportZoomPlugin extends Plugin
 	@Inject
 	private KeyManager keyManager;
 
-	@Inject
-	private ClientUI clientUI;
-
-	private boolean lastFocusStatus = false;
-
 	GameState lastState = GameState.LOGGED_IN;
 
 	WorldPoint lastWorldPoint = null;
 
-	private final CustomHotkeyListener saveKeyListener = new CustomHotkeyListener(() -> config.saveKey())
+	private final HotkeyListener saveKeyListener = new HotkeyListener(() -> config.saveKey())
 	{
 		@Override
 		public void hotkeyPressed()
@@ -64,7 +58,7 @@ public class TeleportZoomPlugin extends Plugin
 		}
 	};
 
-	private final CustomHotkeyListener deleteKeyListener = new CustomHotkeyListener(() -> config.deleteKey())
+	private final HotkeyListener deleteKeyListener = new HotkeyListener(() -> config.deleteKey())
 	{
 		@Override
 		public void hotkeyPressed()
@@ -91,23 +85,6 @@ public class TeleportZoomPlugin extends Plugin
 	{
 		keyManager.unregisterKeyListener(saveKeyListener);
 		keyManager.unregisterKeyListener(deleteKeyListener);
-	}
-
-	@Subscribe
-	public void onClientTick(ClientTick event)
-	{
-		//Fix chat being locked & hotkeys from being unusable if user loses focus
-		if(lastFocusStatus != clientUI.isFocused()){
-			if(!clientUI.isFocused()){
-				if(saveKeyListener.isPressed()){
-					saveKeyListener.ReleaseHotkey();
-				}
-				if(deleteKeyListener.isPressed()){
-					deleteKeyListener.ReleaseHotkey();
-				}
-			}
-		}
-		lastFocusStatus = clientUI.isFocused();
 	}
 
 	/**
