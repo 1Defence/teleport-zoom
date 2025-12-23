@@ -14,10 +14,12 @@ import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.HotkeyListener;
 
 @Slf4j
@@ -44,6 +46,18 @@ public class TeleportZoomPlugin extends Plugin
 
 	@Inject
 	private KeyManager keyManager;
+
+	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
+	private GwenithHandler gwenithHandler;
+
+	@Inject
+	private GwenithTeleportsOverlay gwenithTeleportsOverlay;
+
+	@Inject
+	private EventBus eventBus;
 
 	@Inject SelectionHandler selectionHandler;
 
@@ -80,6 +94,8 @@ public class TeleportZoomPlugin extends Plugin
 	{
 		keyManager.registerKeyListener(saveKeyListener);
 		keyManager.registerKeyListener(deleteKeyListener);
+		overlayManager.add(gwenithTeleportsOverlay);
+		eventBus.register(gwenithHandler);
 	}
 
 	@Override
@@ -87,6 +103,8 @@ public class TeleportZoomPlugin extends Plugin
 	{
 		keyManager.unregisterKeyListener(saveKeyListener);
 		keyManager.unregisterKeyListener(deleteKeyListener);
+		overlayManager.remove(gwenithTeleportsOverlay);
+		eventBus.unregister(gwenithHandler);
 	}
 
 	/**
@@ -148,6 +166,8 @@ public class TeleportZoomPlugin extends Plugin
 	 * Call the script the compass uses to set a pre-defined angle of N-E-S-W
 	 */
 	void SetDirection(Direction direction){
+		if(direction == Direction.UNSET)
+			return;
 		final int compassScriptID = 1050;
 		client.runScript(compassScriptID, direction.getScriptValue());
 	}
