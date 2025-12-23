@@ -45,6 +45,8 @@ public class TeleportZoomPlugin extends Plugin
 	@Inject
 	private KeyManager keyManager;
 
+	@Inject SelectionHandler selectionHandler;
+
 	GameState lastState = GameState.LOGGED_IN;
 
 	WorldPoint lastWorldPoint = null;
@@ -121,8 +123,33 @@ public class TeleportZoomPlugin extends Plugin
 				}
 			}
 
+			String savedDirectionRaw = configManager.getConfiguration(TeleportZoomConfig.GROUP, TeleportZoomConfig.PREFIX_DIRECTION + GetCurrentRegion());
+			if (savedDirectionRaw != null)
+			{
+				//ensures the direction change only triggers if the player traverses more than the max natural tiles possible in one tick(1=walk,2=run,3=run+light log)
+				boolean distanceValid = lastWorldPoint == null || GetCurrentWorldPoint().distanceTo(lastWorldPoint) > 3;
+				if (distanceValid)
+				{
+					try
+					{
+						Direction savedDirection = Direction.valueOf(savedDirectionRaw);
+						SetDirection(savedDirection);
+					} catch (IllegalArgumentException ignored)
+					{
+					}
+				}
+			}
+
 		}
 		lastState = gameStateChanged.getGameState();
+	}
+
+	/**
+	 * Call the script the compass uses to set a pre-defined angle of N-E-S-W
+	 */
+	void SetDirection(Direction direction){
+		final int compassScriptID = 1050;
+		client.runScript(compassScriptID, direction.getScriptValue());
 	}
 
 	/**
@@ -188,6 +215,10 @@ public class TeleportZoomPlugin extends Plugin
 			int currentZoom = GetCurrentZoom();
 			configManager.setConfiguration(TeleportZoomConfig.GROUP, TeleportZoomConfig.PREFIX + currentRegionId, currentZoom);
 			SendGameMessage("Saved zoom...(" + currentZoom + ")");
+			if (config.directionPrompt())
+			{
+				selectionHandler.promptForDirection(currentRegionId);
+			}
 		}
 	}
 
@@ -200,6 +231,7 @@ public class TeleportZoomPlugin extends Plugin
 		{
 			int currentZoom = GetCurrentZoom();
 			configManager.unsetConfiguration(TeleportZoomConfig.GROUP, TeleportZoomConfig.PREFIX + currentRegionId);
+			configManager.unsetConfiguration(TeleportZoomConfig.GROUP, TeleportZoomConfig.PREFIX_DIRECTION + currentRegionId);
 			SendGameMessage("Deleted zoom...("+currentZoom+")");
 		}
 	}

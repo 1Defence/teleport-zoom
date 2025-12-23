@@ -12,6 +12,8 @@ public interface TeleportZoomConfig extends Config
 {
 	String GROUP = "teleportzoom";
 	String PREFIX = "region_";
+	String PREFIX_DIRECTION = "regionDirection_";
+
 	@ConfigItem(
 			keyName = "saveZoomKey",
 			name = "Save Zoom",
@@ -32,5 +34,16 @@ public interface TeleportZoomConfig extends Config
 	default Keybind deleteKey()
 	{
 		return new Keybind(KeyEvent.VK_DELETE, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+	}
+
+	@ConfigItem(
+			keyName = "directionPrompt",
+			name = "Direction Prompt",
+			description = "Additionally prompt for a compass direction on save (Cardinals only)",
+			position = 3
+	)
+	default boolean directionPrompt()
+	{
+		return false;
 	}
 }
