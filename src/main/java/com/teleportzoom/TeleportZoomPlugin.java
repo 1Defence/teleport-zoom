@@ -96,6 +96,7 @@ public class TeleportZoomPlugin extends Plugin
 		keyManager.registerKeyListener(deleteKeyListener);
 		overlayManager.add(gwenithTeleportsOverlay);
 		eventBus.register(gwenithHandler);
+		gwenithHandler.registerBoat();
 	}
 
 	@Override

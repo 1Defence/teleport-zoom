@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ScriptID;
 import net.runelite.api.WorldEntity;
+import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.WidgetLoaded;
@@ -121,6 +122,21 @@ public class GwenithHandler
         this.client = client;
         this.pendingTeleport = false;
         cachePortalSettings();
+    }
+
+    /**Register boat on startup when no spawn events occur*/
+    public void registerBoat(){
+        WorldView wv = client.getTopLevelWorldView();
+        if(wv == null)
+            return;
+
+        for (WorldEntity worldEntity : wv.worldEntities())
+        {
+            if (worldEntity.getOwnerType() == WorldEntity.OWNER_TYPE_SELF_PLAYER)
+            {
+                boatEntity = worldEntity;
+            }
+        }
     }
 
     /**
@@ -262,6 +278,8 @@ public class GwenithHandler
      */
     WorldPoint GetClosestPortal()
     {
+        if(boatEntity == null)
+            return null;
         WorldPoint boat = GetBoatWorldLocation();
         WorldPoint closestPoint = null;
         int lowestDist = Integer.MAX_VALUE;
