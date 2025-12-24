@@ -135,6 +135,7 @@ public class GwenithHandler
             if (worldEntity.getOwnerType() == WorldEntity.OWNER_TYPE_SELF_PLAYER)
             {
                 boatEntity = worldEntity;
+                break;
             }
         }
     }
