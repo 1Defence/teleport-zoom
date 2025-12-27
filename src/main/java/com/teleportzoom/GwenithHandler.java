@@ -36,6 +36,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ScriptPreFired;
 import net.runelite.api.events.WorldEntitySpawned;
 import net.runelite.api.gameval.VarbitID;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -116,12 +117,12 @@ public class GwenithHandler
     }
 
     @Inject
-    public GwenithHandler(TeleportZoomPlugin plugin,TeleportZoomConfig config, ConfigManager configManager,Client client){
+    public GwenithHandler(TeleportZoomPlugin plugin, TeleportZoomConfig config, ConfigManager configManager, Client client, ClientThread clientThread){
         this.plugin = plugin;
         this.config = config;
         this.configManager = configManager;
         this.client = client;
-        cachePortalSettings();
+        clientThread.invokeLater(this::cachePortalSettings);
     }
 
     /**Register boat on startup when no spawn events occur*/
