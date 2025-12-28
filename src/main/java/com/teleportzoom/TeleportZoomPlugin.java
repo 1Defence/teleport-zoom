@@ -25,7 +25,7 @@ import net.runelite.client.util.HotkeyListener;
 @Slf4j
 @PluginDescriptor(
 	name = "Teleport Zoom",
-		description = "Set custom zoom value when arriving at a teleport"
+		description = "Set custom zoom value/compass when arriving at a teleport"
 )
 public class TeleportZoomPlugin extends Plugin
 {
