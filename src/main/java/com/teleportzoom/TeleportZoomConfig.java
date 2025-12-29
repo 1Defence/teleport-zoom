@@ -81,7 +81,7 @@ public interface TeleportZoomConfig extends Config
 
 	@ConfigItem(
 			keyName = "portalLabels",
-			name = "Portal Labels",
+			name = "Draw Portal Labels",
 			description = "Draws labels over portals, used to determine what portals you want to modify the zoom/direction of",
 			position = 14,
 			section = gwenithGeneralPanel
@@ -94,7 +94,7 @@ public interface TeleportZoomConfig extends Config
 
 	@ConfigItem(
 			keyName = "enableHandles",
-			name = "Enable Handles",
+			name = "Enable Gwenith Teleports",
 			description = "Enables Direction/zoom modification on portal teleports with below settings.",
 			position = 15,
 			section = gwenithGeneralPanel
